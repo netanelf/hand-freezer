@@ -16,6 +16,7 @@
 
 int activeSensor = SENSOR_0;
 int sensorState[SENSORS_NUM];
+int prevState[SENSORS_NUM];
 
 void setup(){
   Serial.begin(9600);
@@ -41,12 +42,14 @@ void readData(){
       digitalWrite(load, LOW);
       digitalWrite(load, HIGH);
       for(int i=0; i<SENSORS_NUM; i++){
-            sensorState[i] = digitalRead(data_in);
-            digitalWrite(clk, LOW);
-            digitalWrite(clk, HIGH);
+        prevState[i] = sensorState[i];
+        sensorState[i] = digitalRead(data_in);
+        digitalWrite(clk, LOW);
+        digitalWrite(clk, HIGH);
     }
 }
 
+/*
 void checkData(){
   if      (activeSensor == SENSOR_0 && sensorState[SENSOR_0]){
     flashLed(LED_0, FLASH_TIME);
@@ -56,6 +59,13 @@ void checkData(){
     flashLed(LED_1, FLASH_TIME);
     activeSensor = SENSOR_0;    
   }
+}
+*/
+
+void checkData() {
+  if      (sensorState[SENSOR_0] && sensorState[SENSOR_1] && (sensorState[SENSOR_0] != prevState[SENSOR_0])) flashLed(LED_0, FLASH_TIME);
+  //else if (!sensorState[SENSOR_0] && sensorState[SENSOR_1] && (sensorState[SENSOR_0] != prevState[SENSOR_0])) flashLed(LED_0, FLASH_TIME);
+
 }
 
 void flashLed(int led, int t){
